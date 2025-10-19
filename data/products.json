@@ -1,0 +1,50 @@
+[
+  {
+    "productId": "P17608624236058",
+    "title": "羽毛球拍（双拍）",
+    "description": "李宁N90，使用半年",
+    "price": 350.0,
+    "category": "SPORTS",
+    "condition": "GOOD",
+    "status": "RESERVED",
+    "sellerId": "U17608624235534",
+    "publishTime": "2025-10-19 16:27:03",
+    "updateTime": "2025-10-19 21:00:43"
+  },
+  {
+    "productId": "P17608624236056",
+    "title": "Java编程思想（第4版）",
+    "description": "经典教材，几乎全新",
+    "price": 89.0,
+    "category": "BOOKS",
+    "condition": "LIKE_NEW",
+    "status": "SOLD",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-19 16:27:03",
+    "updateTime": "2025-10-19 21:01:47"
+  },
+  {
+    "productId": "P17608624236057",
+    "title": "Nike运动鞋",
+    "description": "42码，穿过3次",
+    "price": 299.0,
+    "category": "CLOTHING",
+    "condition": "GOOD",
+    "status": "AVAILABLE",
+    "sellerId": "U17608624235534",
+    "publishTime": "2025-10-19 16:27:03",
+    "updateTime": "2025-10-19 16:27:03"
+  },
+  {
+    "productId": "P17608624235905",
+    "title": "iPhone 13 Pro",
+    "description": "9成新，无划痕，配件齐全",
+    "price": 4599.0,
+    "category": "ELECTRONICS",
+    "condition": "LIKE_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-19 16:27:03",
+    "updateTime": "2025-10-19 16:27:03"
+  }
+]

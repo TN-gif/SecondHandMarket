@@ -1,0 +1,22 @@
+[
+  {
+    "orderId": "O17608785267431",
+    "productId": "P17608624236056",
+    "buyerId": "U17608624235532",
+    "sellerId": "U17608624235533",
+    "price": 89.0,
+    "status": "COMPLETED",
+    "createTime": "2025-10-19 20:55:26",
+    "confirmTime": "2025-10-19 20:58:11",
+    "completeTime": "2025-10-19 21:01:47"
+  },
+  {
+    "orderId": "O17608788432502",
+    "productId": "P17608624236058",
+    "buyerId": "U17608624235532",
+    "sellerId": "U17608624235534",
+    "price": 350.0,
+    "status": "PENDING",
+    "createTime": "2025-10-19 21:00:43"
+  }
+]

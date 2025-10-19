@@ -1,0 +1,64 @@
+[
+  {
+    "userId": "U17608624235534",
+    "username": "wangwu",
+    "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "roles": [
+      "BUYER",
+      "SELLER"
+    ],
+    "status": "ACTIVE",
+    "reputation": 100,
+    "registerTime": "2025-10-19 16:27:03",
+    "lastLoginTime": "2025-10-19 16:27:03"
+  },
+  {
+    "userId": "U17608624235533",
+    "username": "lisi",
+    "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "roles": [
+      "SELLER"
+    ],
+    "status": "ACTIVE",
+    "reputation": 105,
+    "registerTime": "2025-10-19 16:27:03",
+    "lastLoginTime": "2025-10-19 21:11:22"
+  },
+  {
+    "userId": "U17608624235532",
+    "username": "zhangsan",
+    "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "roles": [
+      "BUYER"
+    ],
+    "status": "ACTIVE",
+    "reputation": 100,
+    "registerTime": "2025-10-19 16:27:03",
+    "lastLoginTime": "2025-10-19 21:23:13"
+  },
+  {
+    "userId": "U17608792961404",
+    "username": "tallay",
+    "password": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+    "roles": [
+      "BUYER",
+      "SELLER"
+    ],
+    "status": "ACTIVE",
+    "reputation": 100,
+    "registerTime": "2025-10-19 21:08:16",
+    "lastLoginTime": "2025-10-19 21:08:23"
+  },
+  {
+    "userId": "U17608624234941",
+    "username": "admin",
+    "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "roles": [
+      "ADMIN"
+    ],
+    "status": "ACTIVE",
+    "reputation": 100,
+    "registerTime": "2025-10-19 16:27:03",
+    "lastLoginTime": "2025-10-19 21:06:04"
+  }
+]
