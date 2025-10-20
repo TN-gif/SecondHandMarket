@@ -1,5 +1,6 @@
 package repository;
 
+import entity.Appeal;
 import entity.Message;
 import entity.Order;
 import entity.Product;
@@ -51,7 +52,7 @@ public class DataCenter {
      * 私有构造器，防止外部创建实例
      */
     private DataCenter() {
-        System.out.println("[系统] DataCenter 初始化完成");
+        System.out.println("[系统] 数据中心初始化完成");
     }
     
     // ========== 数据存储 ==========
@@ -80,6 +81,11 @@ public class DataCenter {
      * 消息数据（key: messageId, value: Message）
      */
     private final Map<String, Message> messages = new ConcurrentHashMap<>();
+    
+    /**
+     * 申诉数据（key: appealId, value: Appeal）
+     */
+    private final Map<String, Appeal> appeals = new ConcurrentHashMap<>();
     
     // ========== 用户相关操作 ==========
     
@@ -349,6 +355,63 @@ public class DataCenter {
         messages.remove(messageId);
     }
     
+    // ========== 申诉相关操作 ==========
+    
+    /**
+     * 添加申诉
+     */
+    public void addAppeal(Appeal appeal) {
+        appeals.put(appeal.getAppealId(), appeal);
+    }
+    
+    /**
+     * 根据ID查找申诉
+     */
+    public Optional<Appeal> findAppealById(String appealId) {
+        return Optional.ofNullable(appeals.get(appealId));
+    }
+    
+    /**
+     * 获取所有申诉
+     */
+    public List<Appeal> getAllAppeals() {
+        return new ArrayList<>(appeals.values());
+    }
+    
+    /**
+     * 根据用户ID获取申诉列表
+     */
+    public List<Appeal> findAppealsByUserId(String userId) {
+        return appeals.values().stream()
+                .filter(a -> a.getUserId().equals(userId))
+                .sorted((a1, a2) -> a2.getCreateTime().compareTo(a1.getCreateTime()))
+                .toList();
+    }
+    
+    /**
+     * 获取未处理的申诉列表
+     */
+    public List<Appeal> findUnprocessedAppeals() {
+        return appeals.values().stream()
+                .filter(a -> !a.isProcessed())
+                .sorted((a1, a2) -> a1.getCreateTime().compareTo(a2.getCreateTime()))
+                .toList();
+    }
+    
+    /**
+     * 获取申诉总数
+     */
+    public int getAppealCount() {
+        return appeals.size();
+    }
+    
+    /**
+     * 删除申诉
+     */
+    public void deleteAppeal(String appealId) {
+        appeals.remove(appealId);
+    }
+    
     /**
      * 清空所有数据（用于测试）
      */
@@ -358,6 +421,7 @@ public class DataCenter {
         orders.clear();
         reviews.clear();
         messages.clear();
+        appeals.clear();
         System.out.println("[系统] 数据已清空");
     }
 }

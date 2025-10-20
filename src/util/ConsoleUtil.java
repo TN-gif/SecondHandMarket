@@ -38,28 +38,28 @@ public class ConsoleUtil {
      * 打印成功消息
      */
     public static void printSuccess(String message) {
-        System.out.println("✓ " + message);
+        System.out.println("[成功] " + message);
     }
     
     /**
      * 打印错误消息
      */
     public static void printError(String message) {
-        System.out.println("✗ 错误：" + message);
+        System.out.println("[错误] " + message);
     }
     
     /**
      * 打印信息消息
      */
     public static void printInfo(String message) {
-        System.out.println("ℹ " + message);
+        System.out.println("[信息] " + message);
     }
     
     /**
      * 打印警告消息
      */
     public static void printWarning(String message) {
-        System.out.println("⚠ 警告：" + message);
+        System.out.println("[警告] " + message);
     }
     
     /**

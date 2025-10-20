@@ -1,0 +1,29 @@
+[
+  {
+    "appealId": "A17609688595229",
+    "userId": "U17608792961404",
+    "reason": "再次请求",
+    "createTime": "2025-10-20 22:00:59",
+    "processed": true,
+    "result": "已通过：账号已解封",
+    "processTime": "2025-10-20 22:04:52"
+  },
+  {
+    "appealId": "A17609363507162",
+    "userId": "U17608792961404",
+    "reason": "申诉理由",
+    "createTime": "2025-10-20 12:59:10",
+    "processed": true,
+    "result": "拒绝：拒绝理由",
+    "processTime": "2025-10-20 12:59:39"
+  },
+  {
+    "appealId": "A17609504015522",
+    "userId": "U17608792961404",
+    "reason": "申诉理由",
+    "createTime": "2025-10-20 16:53:21",
+    "processed": true,
+    "result": "已拒绝：拒绝理由",
+    "processTime": "2025-10-20 20:36:06"
+  }
+]

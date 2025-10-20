@@ -67,7 +67,7 @@ public class Product {
             this.status = ProductStatus.RESERVED;
             this.updateTime = LocalDateTime.now();
         } else {
-            throw new IllegalStateException("商品当前状态不可预订");
+            throw new IllegalStateException("当前状态不允许预订商品");
         }
     }
     
@@ -89,7 +89,7 @@ public class Product {
             this.status = ProductStatus.SOLD;
             this.updateTime = LocalDateTime.now();
         } else {
-            throw new IllegalStateException("商品当前状态不可标记为已售出");
+            throw new IllegalStateException("当前状态不允许标记为已售");
         }
     }
     
@@ -100,8 +100,10 @@ public class Product {
         if (status == ProductStatus.AVAILABLE) {
             this.status = ProductStatus.REMOVED;
             this.updateTime = LocalDateTime.now();
+        } else if (status == ProductStatus.REMOVED) {
+            throw new IllegalStateException("商品已下架，无法重复下架");
         } else {
-            throw new IllegalStateException("只有可售状态的商品可以下架");
+            throw new IllegalStateException("Only available products can be removed");
         }
     }
     

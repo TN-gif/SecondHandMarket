@@ -7,6 +7,7 @@ import enums.ProductCategory;
 import enums.ProductCondition;
 import enums.ProductStatus;
 import enums.UserRole;
+import enums.UserStatus;
 import exception.BusinessException;
 import exception.PermissionDeniedException;
 import exception.ResourceNotFoundException;
@@ -14,6 +15,8 @@ import repository.DataCenter;
 import strategy.SortStrategy;
 import util.IdGenerator;
 import util.InputValidator;
+import util.SimpleLogger;
+import util.ValidationUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +36,8 @@ import java.util.stream.Collectors;
  */
 public class ProductService {
     
+    private static final SimpleLogger logger = SimpleLogger.getLogger(ProductService.class);
+    
     private final DataCenter dataCenter;
     
     public ProductService() {
@@ -49,28 +54,49 @@ public class ProductService {
     public Product publishProduct(User currentUser, String title, String description,
                                    double price, ProductCategory category, 
                                    ProductCondition condition) {
-        // 1. 权限校验
-        if (!currentUser.hasRole(UserRole.SELLER)) {
-            throw new PermissionDeniedException("只有卖家可以发布商品");
+        logger.info("Publish product request: sellerId={}, title={}, price={}", 
+                   currentUser.getUserId(), title, price);
+        
+        try {
+            // 1. 用户状态检查
+            if (currentUser.getStatus() == UserStatus.BANNED) {
+                logger.warn("Publish failed: user banned - userId={}", currentUser.getUserId());
+                throw new PermissionDeniedException("您的账号已被封禁，无法发布商品");
+            }
+            if (currentUser.getStatus() == UserStatus.DELETED) {
+                logger.warn("Publish failed: user deleted - userId={}", currentUser.getUserId());
+                throw new PermissionDeniedException("账号已被删除");
+            }
+            
+            // 2. 权限校验
+            if (!currentUser.hasRole(UserRole.SELLER)) {
+                logger.warn("Publish failed: not a seller - userId={}", currentUser.getUserId());
+                throw new PermissionDeniedException("只有卖家才能发布商品");
+            }
+            
+            // 3. 输入验证
+            ValidationUtils.validateProductTitle(title);
+            ValidationUtils.validateProductDescription(description);
+            ValidationUtils.validatePrice(price);
+            
+            // 4. 创建商品
+            String productId = IdGenerator.generateProductId();
+            Product product = new Product(productId, title, description, 
+                                         price, category, condition, currentUser.getUserId());
+            
+            // 5. 保存到数据中心
+            dataCenter.addProduct(product);
+            
+            logger.info("Product published successfully: productId={}, sellerId={}, title={}", 
+                       productId, currentUser.getUserId(), title);
+            
+            return product;
+            
+        } catch (Exception e) {
+            logger.error("Publish product failed: sellerId={}, error={}", 
+                        currentUser.getUserId(), e.getMessage());
+            throw e;
         }
-        
-        // 2. 输入验证
-        if (!InputValidator.isNotEmpty(title)) {
-            throw new BusinessException("商品标题不能为空");
-        }
-        if (!InputValidator.isValidPrice(price)) {
-            throw new BusinessException("价格必须大于0");
-        }
-        
-        // 3. 创建商品
-        String productId = IdGenerator.generateProductId();
-        Product product = new Product(productId, title, description, 
-                                     price, category, condition, currentUser.getUserId());
-        
-        // 4. 保存到数据中心
-        dataCenter.addProduct(product);
-        
-        return product;
     }
     
     /**
@@ -78,29 +104,40 @@ public class ProductService {
      */
     public void editProduct(User currentUser, String productId, 
                            String newTitle, String newDescription, double newPrice) {
-        // 1. 查找商品
-        Product product = getProductById(productId);
+        logger.info("Edit product request: productId={}, sellerId={}", 
+                   productId, currentUser.getUserId());
         
-        // 2. 权限校验：只能编辑自己的商品
-        checkOwnership(currentUser, product);
-        
-        // 3. 状态检查：只有可售状态可以编辑
-        if (product.getStatus() != ProductStatus.AVAILABLE) {
-            throw new BusinessException("当前状态的商品不可编辑");
+        try {
+            // 1. 查找商品
+            Product product = getProductById(productId);
+            
+            // 2. 权限校验：只能编辑自己的商品
+            checkOwnership(currentUser, product);
+            
+            // 3. 状态检查：只有可售状态可以编辑
+            if (product.getStatus() != ProductStatus.AVAILABLE) {
+                logger.warn("Edit failed: product not available - productId={}, status={}", 
+                           productId, product.getStatus());
+                throw new BusinessException("当前状态的商品不能编辑");
+            }
+            
+            // 4. 输入验证
+            ValidationUtils.validateProductTitle(newTitle);
+            ValidationUtils.validateProductDescription(newDescription);
+            ValidationUtils.validatePrice(newPrice);
+            
+            // 5. 更新商品信息
+            product.setTitle(newTitle);
+            product.setDescription(newDescription);
+            product.setPrice(newPrice);
+            
+            logger.info("Product edited successfully: productId={}", productId);
+            
+        } catch (Exception e) {
+            logger.error("Edit product failed: productId={}, error={}", 
+                        productId, e.getMessage());
+            throw e;
         }
-        
-        // 4. 输入验证
-        if (!InputValidator.isNotEmpty(newTitle)) {
-            throw new BusinessException("商品标题不能为空");
-        }
-        if (!InputValidator.isValidPrice(newPrice)) {
-            throw new BusinessException("价格必须大于0");
-        }
-        
-        // 5. 更新商品信息
-        product.setTitle(newTitle);
-        product.setDescription(newDescription);
-        product.setPrice(newPrice);
     }
     
     /**
@@ -204,7 +241,7 @@ public class ProductService {
         
         // 1. 状态检查
         if (!product.isAvailable()) {
-            throw new BusinessException("商品当前不可购买");
+            throw new BusinessException("商品不可购买");
         }
         
         // 2. 不能购买自己的商品

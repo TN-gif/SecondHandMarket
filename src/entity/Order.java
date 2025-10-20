@@ -54,7 +54,7 @@ public class Order {
             this.status = OrderStatus.CONFIRMED;
             this.confirmTime = LocalDateTime.now();
         } else {
-            throw new IllegalStateException("只有待确认的订单可以确认");
+            throw new IllegalStateException("Only pending orders can be confirmed");
         }
     }
     
@@ -66,7 +66,7 @@ public class Order {
             this.status = OrderStatus.COMPLETED;
             this.completeTime = LocalDateTime.now();
         } else {
-            throw new IllegalStateException("只有已确认的订单可以完成");
+            throw new IllegalStateException("Only confirmed orders can be completed");
         }
     }
     
@@ -79,7 +79,7 @@ public class Order {
             this.cancelReason = reason;
             this.completeTime = LocalDateTime.now();  // 使用完成时间记录取消时间
         } else {
-            throw new IllegalStateException("当前状态不可取消");
+            throw new IllegalStateException("当前状态不允许取消");
         }
     }
     

@@ -5,10 +5,10 @@ package enums;
  */
 public enum ProductCategory {
     ELECTRONICS("电子产品"),
-    BOOKS("图书教材"),
-    CLOTHING("服装鞋帽"),
-    SPORTS("运动器材"),
-    DAILY("生活用品"),
+    BOOKS("图书"),
+    CLOTHING("服装"),
+    SPORTS("运动"),
+    DAILY("日用品"),
     OTHER("其他");
     
     private final String displayName;

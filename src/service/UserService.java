@@ -11,6 +11,8 @@ import repository.DataCenter;
 import util.IdGenerator;
 import util.InputValidator;
 import util.PasswordEncoder;
+import util.SimpleLogger;
+import util.ValidationUtils;
 
 import java.util.Optional;
 import java.util.Set;
@@ -30,6 +32,8 @@ import java.util.Set;
  * - 输入验证：用户名、密码格式验证
  */
 public class UserService {
+    
+    private static final SimpleLogger logger = SimpleLogger.getLogger(UserService.class);
     
     private final DataCenter dataCenter;
     private final NotificationService notificationService;
@@ -58,68 +62,92 @@ public class UserService {
      * 用户注册
      */
     public User register(String username, String password, Set<UserRole> roles) {
-        // 1. 验证输入
-        if (!InputValidator.isValidUsername(username)) {
-            throw new BusinessException("用户名格式不正确（4-20位字母数字）");
-        }
-        if (!InputValidator.isValidPassword(password)) {
-            throw new BusinessException("密码格式不正确（6-20位）");
-        }
-        if (roles.isEmpty()) {
-            throw new BusinessException("至少选择一个角色");
-        }
+        logger.info("用户注册请求: username={}, roles={}", username, roles);
         
-        // 2. 检查用户名是否存在
-        if (dataCenter.existsUsername(username)) {
-            throw new BusinessException("用户名已存在");
+        try {
+            // 1. 验证输入
+            ValidationUtils.validateUsername(username);
+            ValidationUtils.validatePassword(password);
+            
+            if (roles.isEmpty()) {
+                logger.warn("注册失败: 角色为空 - username={}", username);
+                throw new BusinessException("至少需要选择一个角色");
+            }
+            
+            // 2. 检查用户名是否存在
+            if (dataCenter.existsUsername(username)) {
+                logger.warn("注册失败: 用户名已存在 - {}", username);
+                throw new BusinessException("用户名已存在");
+            }
+            
+            // 3. 创建用户（密码加密）
+            String userId = IdGenerator.generateUserId();
+            String encodedPassword = PasswordEncoder.encode(password);
+            User user = new User(userId, username, encodedPassword, roles);
+            
+            // 4. 保存到数据中心
+            dataCenter.addUser(user);
+            
+            logger.info("注册成功: userId={}, username={}, roles={}", 
+                       userId, username, roles);
+            
+            return user;
+            
+        } catch (BusinessException e) {
+            logger.error("注册失败: username={}, error={}", username, e.getMessage());
+            throw e;
         }
-        
-        // 3. 创建用户（密码加密）
-        String userId = IdGenerator.generateUserId();
-        String encodedPassword = PasswordEncoder.encode(password);
-        User user = new User(userId, username, encodedPassword, roles);
-        
-        // 4. 保存到数据中心
-        dataCenter.addUser(user);
-        
-        return user;
     }
     
     /**
      * 用户登录
      */
     public User login(String username, String password) {
-        // 1. 查找用户
-        User user = dataCenter.findUserByUsername(username)
-                .orElseThrow(() -> new AuthenticationException("用户名或密码错误"));
+        logger.info("登录请求: username={}", username);
         
-        // 2. 验证密码
-        if (!PasswordEncoder.matches(password, user.getPassword())) {
-            throw new AuthenticationException("用户名或密码错误");
+        try {
+            // 1. 查找用户
+            User user = dataCenter.findUserByUsername(username)
+                    .orElseThrow(() -> {
+                        logger.warn("登录失败: 用户名不存在 - {}", username);
+                        return new AuthenticationException("用户名或密码错误");
+                    });
+            
+            // 2. 验证密码
+            if (!PasswordEncoder.matches(password, user.getPassword())) {
+                logger.warn("登录失败: 密码错误 - username={}", username);
+                throw new AuthenticationException("用户名或密码错误");
+            }
+            
+            // 3. 检查用户状态
+            if (user.getStatus() == UserStatus.DELETED) {
+                logger.warn("登录失败: 账号已注销 - username={}", username);
+                throw new AuthenticationException("账号已注销");
+            }
+            // 被封禁用户可以登录但只能查看申诉功能
+            
+            // 4. 更新登录时间
+            user.updateLastLoginTime();
+            
+            // 5. 设置当前用户
+            this.currentUser = user;
+            
+            // 6. 创建消息接收器并订阅通知（观察者模式）
+            this.currentReceiver = new UserMessageReceiver(user.getUserId());
+            this.notificationService.subscribe(user.getUserId(), currentReceiver);
+            
+            // 7. 发送欢迎消息
+            notificationService.notify(user.getUserId(), "欢迎回来，" + user.getUsername() + "！");
+            
+            logger.info("登录成功: userId={}, username={}, status={}", 
+                       user.getUserId(), username, user.getStatus());
+            
+            return user;
+            
+        } catch (AuthenticationException e) {
+            logger.error("登录失败: username={}, error={}", username, e.getMessage());
+            throw e;
         }
-        
-        // 3. 检查用户状态
-        if (user.getStatus() == UserStatus.BANNED) {
-            throw new AuthenticationException("用户已被封禁");
-        }
-        if (user.getStatus() == UserStatus.DELETED) {
-            throw new AuthenticationException("用户已注销");
-        }
-        
-        // 4. 更新登录时间
-        user.updateLastLoginTime();
-        
-        // 5. 设置当前用户
-        this.currentUser = user;
-        
-        // 6. 创建消息接收器并订阅通知（观察者模式）
-        this.currentReceiver = new UserMessageReceiver(user.getUserId());
-        this.notificationService.subscribe(user.getUserId(), currentReceiver);
-        
-        // 7. 发送欢迎消息
-        notificationService.notify(user.getUserId(), "欢迎回来，" + user.getUsername() + "！");
-        
-        return user;
     }
     
     /**
@@ -127,6 +155,9 @@ public class UserService {
      */
     public void logout() {
         if (currentUser != null && currentReceiver != null) {
+            logger.info("登出: userId={}, username={}", 
+                       currentUser.getUserId(), currentUser.getUsername());
+            
             // 退订通知
             notificationService.unsubscribe(currentUser.getUserId(), currentReceiver);
             currentUser = null;
@@ -195,19 +226,30 @@ public class UserService {
      */
     public void changePassword(String oldPassword, String newPassword) {
         User user = getCurrentUser();
+        logger.info("修改密码请求: userId={}, username={}", 
+                   user.getUserId(), user.getUsername());
         
-        // 验证旧密码
-        if (!PasswordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new BusinessException("原密码错误");
+        try {
+            // 验证旧密码
+            if (!PasswordEncoder.matches(oldPassword, user.getPassword())) {
+                logger.warn("修改密码失败: 旧密码错误 - userId={}", 
+                           user.getUserId());
+                throw new BusinessException("旧密码错误");
+            }
+            
+            // 验证新密码
+            ValidationUtils.validatePassword(newPassword);
+            
+            // 更新密码
+            user.setPassword(PasswordEncoder.encode(newPassword));
+            
+            logger.info("修改密码成功: userId={}", user.getUserId());
+            
+        } catch (BusinessException e) {
+            logger.error("修改密码失败: userId={}, error={}", 
+                        user.getUserId(), e.getMessage());
+            throw e;
         }
-        
-        // 验证新密码
-        if (!InputValidator.isValidPassword(newPassword)) {
-            throw new BusinessException("新密码格式不正确（6-20位）");
-        }
-        
-        // 更新密码
-        user.setPassword(PasswordEncoder.encode(newPassword));
     }
     
     /**

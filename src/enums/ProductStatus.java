@@ -20,7 +20,7 @@ public enum ProductStatus {
     /**
      * 可售：商品已发布，可以被购买
      */
-    AVAILABLE("可售"),
+    AVAILABLE("在售"),
     
     /**
      * 已预订：买家已下单但卖家未确认，或已确认但买家未收货

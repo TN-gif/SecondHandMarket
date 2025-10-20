@@ -1,29 +1,48 @@
-### IntelliJ IDEA ###
+# ========================================
+# Git忽略文件配置
+# ========================================
+
+# ===== 敏感信息文件 =====
+# 包含API密钥的配置文件，绝不上传！
+config.properties
+
+# ===== 编译输出 =====
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+*.class
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# ===== 日志文件 =====
+logs/
+*.log
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
+# ===== IDE配置文件 =====
+.idea/
+*.iml
 .vscode/
+.settings/
+.project
+.classpath
 
-### Mac OS ###
+# ===== 系统文件 =====
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 临时文件 =====
+*.tmp
+*.temp
+*.swp
+*~
+
+# ========================================
+# 上交代码检查清单
+# ========================================
+# ✅ 请确保上交以下文件：
+#    - config.properties.example（示例配置）
+#    - README.md（包含配置说明）
+#    - 所有源代码文件
+# 
+# ❌ 绝不上交以下文件：
+#    - config.properties（真实密钥）
+#    - out/（编译输出）
+#    - logs/（日志文件）
+# ========================================

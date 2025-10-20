@@ -46,6 +46,13 @@ public class IdGenerator {
     public static String generateMessageId() {
         return "M" + System.currentTimeMillis() + counter.getAndIncrement();
     }
+    
+    /**
+     * 生成申诉ID
+     */
+    public static String generateAppealId() {
+        return "A" + System.currentTimeMillis() + counter.getAndIncrement();
+    }
 }
 
 

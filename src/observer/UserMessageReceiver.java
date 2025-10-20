@@ -33,7 +33,7 @@ public class UserMessageReceiver implements MessageObserver {
         messages.add(formattedMessage);
         
         // 实时打印通知（可选）
-        System.out.println("📬 新消息：" + message);
+        System.out.println("[!] 新消息：" + message);
     }
     
     /**

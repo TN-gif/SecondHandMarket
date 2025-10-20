@@ -9,7 +9,7 @@
     "status": "RESERVED",
     "sellerId": "U17608624235534",
     "publishTime": "2025-10-19 16:27:03",
-    "updateTime": "2025-10-19 21:00:43"
+    "updateTime": "2025-10-20 22:17:46"
   },
   {
     "productId": "P17608624236056",
@@ -30,10 +30,10 @@
     "price": 299.0,
     "category": "CLOTHING",
     "condition": "GOOD",
-    "status": "AVAILABLE",
+    "status": "SOLD",
     "sellerId": "U17608624235534",
     "publishTime": "2025-10-19 16:27:03",
-    "updateTime": "2025-10-19 16:27:03"
+    "updateTime": "2025-10-20 11:13:00"
   },
   {
     "productId": "P17608624235905",
@@ -42,9 +42,33 @@
     "price": 4599.0,
     "category": "ELECTRONICS",
     "condition": "LIKE_NEW",
-    "status": "AVAILABLE",
+    "status": "RESERVED",
     "sellerId": "U17608624235533",
     "publishTime": "2025-10-19 16:27:03",
-    "updateTime": "2025-10-19 16:27:03"
+    "updateTime": "2025-10-20 22:26:36"
+  },
+  {
+    "productId": "P176096917969612",
+    "title": "抱枕",
+    "description": "软绵绵的抱枕，抱起来很舒服",
+    "price": 50.0,
+    "category": "DAILY",
+    "condition": "BRAND_NEW",
+    "status": "REMOVED",
+    "sellerId": "U17608792961404",
+    "publishTime": "2025-10-20 22:06:19",
+    "updateTime": "2025-10-20 22:20:44"
+  },
+  {
+    "productId": "P17609297883688",
+    "title": "移动应用实践开发基础教程",
+    "description": "帮助完成移动应用的开发，这本书目前只使用过2-3次",
+    "price": 100.0,
+    "category": "BOOKS",
+    "condition": "LIKE_NEW",
+    "status": "RESERVED",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-20 11:09:48",
+    "updateTime": "2025-10-20 21:54:23"
   }
 ]

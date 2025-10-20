@@ -118,12 +118,12 @@ public class User {
      * 获取信誉等级
      */
     public String getReputationLevel() {
-        if (reputation >= 180) return "⭐⭐⭐⭐⭐ 钻石";
-        if (reputation >= 150) return "⭐⭐⭐⭐ 铂金";
-        if (reputation >= 120) return "⭐⭐⭐ 黄金";
-        if (reputation >= 90) return "⭐⭐ 白银";
-        if (reputation >= 60) return "⭐ 青铜";
-        return "⚠ 警告";
+        if (reputation >= 180) return "钻石";
+        if (reputation >= 150) return "铂金";
+        if (reputation >= 120) return "黄金";
+        if (reputation >= 90) return "白银";
+        if (reputation >= 60) return "青铜";
+        return "警告";
     }
     
     /**

@@ -24,7 +24,7 @@ public class InitialDataSetup {
             return; // 已有数据，不重复创建
         }
         
-        System.out.println("[系统] 首次运行，创建示例数据...");
+        System.out.println("[系统] 首次运行，正在创建示例数据...");
         
         // 创建管理员账户
         User admin = UserFactory.createAdmin("admin", "admin123");
@@ -44,7 +44,7 @@ public class InitialDataSetup {
         ProductService ps = new ProductService();
         
         Product p1 = ps.publishProduct(seller1, 
-            "iPhone 13 Pro", 
+            "苹果 iPhone 13 Pro", 
             "9成新，无划痕，配件齐全",
             4599.0,
             ProductCategory.ELECTRONICS,
@@ -58,7 +58,7 @@ public class InitialDataSetup {
             ProductCondition.LIKE_NEW);
         
         Product p3 = ps.publishProduct(bothRole,
-            "Nike运动鞋",
+            "耐克运动鞋",
             "42码，穿过3次",
             299.0,
             ProductCategory.CLOTHING,
@@ -71,12 +71,12 @@ public class InitialDataSetup {
             ProductCategory.SPORTS,
             ProductCondition.GOOD);
         
-        System.out.println("[系统] 示例数据创建完成！");
+        System.out.println("[系统] 示例数据创建成功！");
         System.out.println("[系统] 测试账户：");
-        System.out.println("  管理员 - 用户名: admin, 密码: admin123");
-        System.out.println("  买家   - 用户名: zhangsan, 密码: 123456");
-        System.out.println("  卖家   - 用户名: lisi, 密码: 123456");
-        System.out.println("  买卖家 - 用户名: wangwu, 密码: 123456");
+        System.out.println("  管理员 - 用户名：admin，密码：admin123");
+        System.out.println("  买家   - 用户名：zhangsan，密码：123456");
+        System.out.println("  卖家   - 用户名：lisi，密码：123456");
+        System.out.println("  双角色 - 用户名：wangwu，密码：123456");
         System.out.println();
     }
 }

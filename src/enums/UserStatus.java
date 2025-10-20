@@ -12,7 +12,7 @@ public enum UserStatus {
     /**
      * 被封禁
      */
-    BANNED("封禁"),
+    BANNED("已封禁"),
     
     /**
      * 已注销

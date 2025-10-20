@@ -5,6 +5,7 @@ import adapter.UserRoleSetAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import entity.Appeal;
 import entity.Message;
 import entity.Order;
 import entity.Product;
@@ -44,6 +45,7 @@ public class DataPersistenceManager {
     private static final String ORDERS_FILE = DATA_DIR + "orders.json";
     private static final String REVIEWS_FILE = DATA_DIR + "reviews.json";
     private static final String MESSAGES_FILE = DATA_DIR + "messages.json";
+    private static final String APPEALS_FILE = DATA_DIR + "appeals.json";
     
     private final Gson gson;
     
@@ -78,10 +80,11 @@ public class DataPersistenceManager {
             saveToFile(ORDERS_FILE, dc.getAllOrders());
             saveToFile(REVIEWS_FILE, dc.getAllReviews());
             saveToFile(MESSAGES_FILE, dc.getAllMessages());
+            saveToFile(APPEALS_FILE, dc.getAllAppeals());
             
-            ConsoleUtil.printInfo("数据已保存");
+            ConsoleUtil.printInfo("数据保存成功");
         } catch (IOException e) {
-            ConsoleUtil.printError("数据保存失败：" + e.getMessage());
+            ConsoleUtil.printError("保存数据失败：" + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -128,9 +131,16 @@ public class DataPersistenceManager {
                 messages.forEach(dc::addMessage);
             }
             
-            ConsoleUtil.printInfo("数据已加载");
+            // 加载申诉
+            List<Appeal> appeals = loadFromFile(APPEALS_FILE,
+                new TypeToken<List<Appeal>>(){}.getType());
+            if (appeals != null) {
+                appeals.forEach(dc::addAppeal);
+            }
+            
+            ConsoleUtil.printInfo("数据加载成功");
         } catch (IOException e) {
-            ConsoleUtil.printInfo("首次运行，初始化数据");
+            ConsoleUtil.printInfo("首次运行，正在初始化数据");
         }
     }
     
