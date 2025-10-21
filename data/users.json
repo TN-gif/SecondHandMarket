@@ -10,7 +10,7 @@
     "status": "ACTIVE",
     "reputation": 101,
     "registerTime": "2025-10-19 16:27:03",
-    "lastLoginTime": "2025-10-20 11:14:24"
+    "lastLoginTime": "2025-10-20 23:38:06"
   },
   {
     "userId": "U17608624235533",
@@ -20,9 +20,9 @@
       "SELLER"
     ],
     "status": "ACTIVE",
-    "reputation": 105,
+    "reputation": 108,
     "registerTime": "2025-10-19 16:27:03",
-    "lastLoginTime": "2025-10-20 22:08:38"
+    "lastLoginTime": "2025-10-21 19:50:15"
   },
   {
     "userId": "U17608624235532",
@@ -32,9 +32,9 @@
       "BUYER"
     ],
     "status": "ACTIVE",
-    "reputation": 96,
+    "reputation": 98,
     "registerTime": "2025-10-19 16:27:03",
-    "lastLoginTime": "2025-10-20 21:53:56"
+    "lastLoginTime": "2025-10-21 19:49:25"
   },
   {
     "userId": "U17608792961404",
@@ -45,9 +45,9 @@
       "SELLER"
     ],
     "status": "ACTIVE",
-    "reputation": 70,
+    "reputation": 71,
     "registerTime": "2025-10-19 21:08:16",
-    "lastLoginTime": "2025-10-20 22:24:54"
+    "lastLoginTime": "2025-10-21 20:08:54"
   },
   {
     "userId": "U17609328422481",
@@ -75,6 +75,18 @@
     "lastLoginTime": "2025-10-20 22:00:01"
   },
   {
+    "userId": "U17610469612961",
+    "username": "tanghaowen",
+    "password": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+    "roles": [
+      "SELLER"
+    ],
+    "status": "ACTIVE",
+    "reputation": 100,
+    "registerTime": "2025-10-21 19:42:41",
+    "lastLoginTime": "2025-10-21 19:44:22"
+  },
+  {
     "userId": "U17608624234941",
     "username": "admin",
     "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
@@ -84,6 +96,6 @@
     "status": "ACTIVE",
     "reputation": 100,
     "registerTime": "2025-10-19 16:27:03",
-    "lastLoginTime": "2025-10-20 22:22:12"
+    "lastLoginTime": "2025-10-20 23:35:03"
   }
 ]

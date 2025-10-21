@@ -6,26 +6,30 @@ import java.time.LocalDateTime;
 /**
  * 订单实体类
  * 
- * 核心设计：
- * 1. 记录买家、卖家、商品信息
- * 2. 支持完整的状态流转（待确认→已确认→已完成/已取消）
- * 3. 记录关键时间节点
+ * 管理订单的完整生命周期：PENDING → CONFIRMED → COMPLETED/CANCELLED。
+ * 记录关键时间节点，用于跟踪订单进度和争议处理。
  */
 public class Order {
     
-    private String orderId;             // 订单ID
-    private String productId;           // 商品ID
-    private String buyerId;             // 买家ID
-    private String sellerId;            // 卖家ID
-    private double price;               // 成交价格
-    private OrderStatus status;         // 订单状态
-    private LocalDateTime createTime;   // 创建时间
-    private LocalDateTime confirmTime;  // 确认时间
-    private LocalDateTime completeTime; // 完成时间
-    private String cancelReason;        // 取消原因
+    private String orderId;
+    private String productId;
+    private String buyerId;
+    private String sellerId;
+    private double price;
+    private OrderStatus status;
+    private LocalDateTime createTime;
+    private LocalDateTime confirmTime;
+    private LocalDateTime completeTime;
+    private String cancelReason;
     
     /**
-     * 构造器
+     * 构造订单对象
+     * 
+     * @param orderId 订单ID
+     * @param productId 商品ID
+     * @param buyerId 买家ID
+     * @param sellerId 卖家ID
+     * @param price 成交价格
      */
     public Order(String orderId, String productId, String buyerId, 
                  String sellerId, double price) {
@@ -34,20 +38,24 @@ public class Order {
         this.buyerId = buyerId;
         this.sellerId = sellerId;
         this.price = price;
-        this.status = OrderStatus.PENDING;  // 初始状态为待确认
+        this.status = OrderStatus.PENDING;
         this.createTime = LocalDateTime.now();
     }
     
     /**
-     * 无参构造器（用于JSON反序列化）
+     * 无参构造器
+     * 
+     * 用于JSON反序列化。
      */
     public Order() {
     }
     
-    // ========== 业务方法 ==========
-    
     /**
      * 卖家确认订单
+     * 
+     * 将订单状态从PENDING变为CONFIRMED，表示卖家已接受订单准备发货。
+     * 
+     * @throws IllegalStateException 如果订单不是PENDING状态
      */
     public void confirm() {
         if (status == OrderStatus.PENDING) {

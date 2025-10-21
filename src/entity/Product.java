@@ -8,26 +8,32 @@ import java.time.LocalDateTime;
 /**
  * 商品实体类
  * 
- * 核心设计：
- * 1. 包含RESERVED状态，支持严谨的状态流转
- * 2. 记录卖家ID，用于权限校验
- * 3. 成色、分类使用枚举
+ * 支持完整的商品生命周期状态管理：AVAILABLE → RESERVED → SOLD/AVAILABLE。
+ * RESERVED状态用于订单创建时锁定商品，防止重复购买。
  */
 public class Product {
     
-    private String productId;           // 商品ID
-    private String title;               // 商品标题
-    private String description;         // 商品描述
-    private double price;               // 价格
-    private ProductCategory category;   // 分类
-    private ProductCondition condition; // 成色
-    private ProductStatus status;       // 状态
-    private String sellerId;            // 卖家ID
-    private LocalDateTime publishTime;  // 发布时间
-    private LocalDateTime updateTime;   // 更新时间
+    private String productId;
+    private String title;
+    private String description;
+    private double price;
+    private ProductCategory category;
+    private ProductCondition condition;
+    private ProductStatus status;
+    private String sellerId;
+    private LocalDateTime publishTime;
+    private LocalDateTime updateTime;
     
     /**
-     * 构造器
+     * 构造商品对象
+     * 
+     * @param productId 商品ID
+     * @param title 标题
+     * @param description 描述
+     * @param price 价格
+     * @param category 分类
+     * @param condition 成色
+     * @param sellerId 卖家ID
      */
     public Product(String productId, String title, String description, 
                    double price, ProductCategory category, 
@@ -38,14 +44,16 @@ public class Product {
         this.price = price;
         this.category = category;
         this.condition = condition;
-        this.status = ProductStatus.AVAILABLE;  // 初始状态为可售
+        this.status = ProductStatus.AVAILABLE;
         this.sellerId = sellerId;
         this.publishTime = LocalDateTime.now();
         this.updateTime = LocalDateTime.now();
     }
     
     /**
-     * 无参构造器（用于JSON反序列化）
+     * 无参构造器
+     * 
+     * 用于JSON反序列化。
      */
     public Product() {
     }

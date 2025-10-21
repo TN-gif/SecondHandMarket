@@ -24,22 +24,21 @@ import java.util.Scanner;
 
 /**
  * 用户菜单处理器
- * 职责：处理买家/卖家登录后的交互
+ * 
+ * 负责买家和卖家功能的用户界面交互。
+ * 根据用户角色动态显示相应的功能菜单。
  */
-public class UserMenuHandler implements MenuHandler {
-    private final UserService userService;
+public class UserMenuHandler extends BaseMenuHandler {
     private final ProductService productService;
     private final OrderService orderService;
     private final ReviewService reviewService;
-    private final Scanner scanner;
     
     public UserMenuHandler(UserService userService, ProductService productService,
                           OrderService orderService, ReviewService reviewService) {
-        this.userService = userService;
+        super(userService);
         this.productService = productService;
         this.orderService = orderService;
         this.reviewService = reviewService;
-        this.scanner = new Scanner(System.in);
     }
     
     @Override
@@ -424,12 +423,25 @@ public class UserMenuHandler implements MenuHandler {
         }
         
         ConsoleUtil.printTitle("确认收货");
+        
+        // 使用表格展示待确认收货的订单
+        PerfectTableFormatter.Table table = PerfectTableFormatter.createTable()
+            .setHeaders("No.", "Order ID", "Product Name", "Price", "Seller");
+        
         for (int i = 0; i < confirmedOrders.size(); i++) {
             Order order = confirmedOrders.get(i);
             Product product = productService.getProductById(order.getProductId());
-            System.out.printf("[%d] 订单ID：%s | 商品：%s%n",
-                i + 1, order.getOrderId(), product.getTitle());
+            User seller = userService.getUserById(order.getSellerId());
+            table.addRow(
+                String.valueOf(i + 1),
+                order.getOrderId(),
+                TranslationUtil.toEnglish(product.getTitle()),
+                String.format("%.2f", order.getPrice()),
+                seller.getUsername()
+            );
         }
+        
+        table.print();
         
         Integer index = readIntSafely("选择订单编号（0返回）：", "订单编号无效，请输入有效数字");
         if (index != null && index > 0 && index <= confirmedOrders.size()) {
@@ -462,12 +474,25 @@ public class UserMenuHandler implements MenuHandler {
         }
         
         ConsoleUtil.printTitle("评价订单");
+        
+        // 使用表格展示可评价的订单
+        PerfectTableFormatter.Table table = PerfectTableFormatter.createTable()
+            .setHeaders("No.", "Order ID", "Product Name", "Price", "Seller");
+        
         for (int i = 0; i < reviewableOrders.size(); i++) {
             Order order = reviewableOrders.get(i);
             Product product = productService.getProductById(order.getProductId());
-            System.out.printf("[%d] 订单ID：%s | 商品：%s%n",
-                i + 1, order.getOrderId(), product.getTitle());
+            User seller = userService.getUserById(order.getSellerId());
+            table.addRow(
+                String.valueOf(i + 1),
+                order.getOrderId(),
+                TranslationUtil.toEnglish(product.getTitle()),
+                String.format("%.2f", order.getPrice()),
+                seller.getUsername()
+            );
         }
+        
+        table.print();
         
         Integer index = readIntSafely("选择订单编号（0返回）：", "订单编号无效，请输入有效数字");
         if (index != null && index > 0 && index <= reviewableOrders.size()) {
@@ -1275,164 +1300,6 @@ public class UserMenuHandler implements MenuHandler {
     private void handleLogout() {
         userService.logout();
         ConsoleUtil.printSuccess("退出登录成功");
-    }
-    
-    // ========== 辅助方法 ==========
-    
-    /**
-     * 安全读取整数输入（带验证和错误提示）
-     * @param prompt 提示信息
-     * @param errorMsg 错误提示信息
-     * @return 解析后的整数，失败返回null
-     */
-    private Integer readIntSafely(String prompt, String errorMsg) {
-        System.out.print(prompt);
-        String input = scanner.nextLine();
-        
-        if (!InputValidator.isValidInteger(input)) {
-            ConsoleUtil.printError(errorMsg != null ? errorMsg : "输入格式无效，请输入有效数字");
-            return null;
-        }
-        
-        return InputValidator.parseIntSafe(input);
-    }
-    
-    /**
-     * 获取订单状态的买家视角描述
-     */
-    private String getOrderStatusForBuyer(OrderStatus status) {
-        return switch (status) {
-            case PENDING -> "等待卖家确认";
-            case CONFIRMED -> "已确认，等待收货";
-            case COMPLETED -> "已完成";
-            case CANCELLED -> "已取消";
-        };
-    }
-    
-    /**
-     * 获取订单状态的卖家视角描述
-     */
-    private String getOrderStatusForSeller(OrderStatus status) {
-        return switch (status) {
-            case PENDING -> "等待您确认";
-            case CONFIRMED -> "已确认，等待买家收货";
-            case COMPLETED -> "交易完成";
-            case CANCELLED -> "已取消";
-        };
-    }
-    
-    /**
-     * 计算字符串的实际显示宽度（考虑全角半角）
-     * 改进版：更准确地判断字符宽度
-     */
-    private int getDisplayWidth(String str) {
-        if (str == null) return 0;
-        int width = 0;
-        for (char c : str.toCharArray()) {
-            // 判断字符是否为全角（占2个显示位置）
-            if (isFullWidth(c)) {
-                width += 2;
-            } else {
-                width += 1;
-            }
-        }
-        return width;
-    }
-    
-    /**
-     * 判断字符是否为全角字符
-     * 基于 Unicode East Asian Width 标准实现
-     * 这是最准确的字符宽度判断方法
-     */
-    private boolean isFullWidth(char c) {
-        // 使用 Character.UnicodeBlock 进行精确判断
-        Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
-        
-        if (block == null) return false;
-        
-        // 所有CJK相关字符块（全角）
-        if (block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
-            || block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
-            || block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
-            || block == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
-            || block == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT
-            || block == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
-            || block == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT
-            || block == Character.UnicodeBlock.KANGXI_RADICALS) {
-            return true;
-        }
-        
-        // 日韩文字（全角）
-        if (block == Character.UnicodeBlock.HIRAGANA
-            || block == Character.UnicodeBlock.KATAKANA
-            || block == Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS
-            || block == Character.UnicodeBlock.HANGUL_SYLLABLES
-            || block == Character.UnicodeBlock.HANGUL_JAMO
-            || block == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO) {
-            return true;
-        }
-        
-        // 全角ASCII和全角标点
-        if (block == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
-            // 全角字符范围：0xFF01-0xFF60 和 0xFFE0-0xFFE6
-            return (c >= 0xFF01 && c <= 0xFF60) || (c >= 0xFFE0 && c <= 0xFFE6);
-        }
-        
-        // 中文标点符号等
-        if (block == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
-            // 一些特定的全角标点
-            return c >= 0x2000 && c <= 0x206F;
-        }
-        
-        // 特殊符号（根据实际终端渲染调整）
-        // 这些符号在Windows终端中通常显示为双宽
-        if (c == '★' || c == '☆' || c == '●' || c == '○' || 
-            c == '■' || c == '□' || c == '▲' || c == '△' ||
-            c == '◆' || c == '◇' || c == '※' || c == '√' ||
-            c == '✓' || c == '✗' || c == '✕') {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * 填充字符串到指定显示宽度（精确对齐）
-     * @param str 原始字符串
-     * @param targetWidth 目标显示宽度
-     * @return 填充后的字符串
-     */
-    private String padToWidth(String str, int targetWidth) {
-        if (str == null) str = "";
-        
-        // 计算当前显示宽度
-        int currentWidth = getDisplayWidth(str);
-        
-        // 如果超长，截断
-        if (currentWidth > targetWidth) {
-            int width = 0;
-            int cutIndex = 0;
-            for (int i = 0; i < str.length(); i++) {
-                char c = str.charAt(i);
-                // 修复：使用 isFullWidth 方法保持一致性
-                int charWidth = isFullWidth(c) ? 2 : 1;
-                if (width + charWidth > targetWidth) {
-                    break;
-                }
-                width += charWidth;
-                cutIndex = i + 1;
-            }
-            str = str.substring(0, cutIndex);
-            currentWidth = width;
-        }
-        
-        // 补齐空格到目标宽度
-        StringBuilder sb = new StringBuilder(str);
-        for (int i = currentWidth; i < targetWidth; i++) {
-            sb.append(" ");
-        }
-        
-        return sb.toString();
     }
 }
 

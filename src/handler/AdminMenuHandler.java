@@ -24,17 +24,15 @@ import java.util.Scanner;
 
 /**
  * 管理员菜单处理器
- * 职责：处理管理员的交互
+ * 
+ * 负责管理员功能的用户界面交互，包括用户管理、申诉处理和系统统计。
  */
-public class AdminMenuHandler implements MenuHandler {
-    private final UserService userService;
+public class AdminMenuHandler extends BaseMenuHandler {
     private final AdminService adminService;
-    private final Scanner scanner;
     
     public AdminMenuHandler(UserService userService, AdminService adminService) {
-        this.userService = userService;
+        super(userService);
         this.adminService = adminService;
-        this.scanner = new Scanner(System.in);
     }
     
     @Override
@@ -339,138 +337,5 @@ public class AdminMenuHandler implements MenuHandler {
         ConsoleUtil.printSuccess("退出登录成功");
     }
     
-    // ========== 辅助方法 ==========
-    
-    /**
-     * 安全读取整数输入（带验证和错误提示）
-     * @param prompt 提示信息
-     * @param errorMsg 错误提示信息
-     * @return 解析后的整数，失败返回null
-     */
-    private Integer readIntSafely(String prompt, String errorMsg) {
-        System.out.print(prompt);
-        String input = scanner.nextLine();
-        
-        if (!InputValidator.isValidInteger(input)) {
-            ConsoleUtil.printError(errorMsg != null ? errorMsg : "输入格式无效，请输入有效数字");
-            return null;
-        }
-        
-        return InputValidator.parseIntSafe(input);
-    }
-    
-    /**
-     * 计算字符串的实际显示宽度（考虑全角半角）
-     * 改进版：更准确地判断字符宽度
-     */
-    private int getDisplayWidth(String str) {
-        if (str == null) return 0;
-        int width = 0;
-        for (char c : str.toCharArray()) {
-            // 判断字符是否为全角（占2个显示位置）
-            if (isFullWidth(c)) {
-                width += 2;
-            } else {
-                width += 1;
-            }
-        }
-        return width;
-    }
-    
-    /**
-     * 判断字符是否为全角字符
-     * 基于 Unicode East Asian Width 标准实现
-     * 这是最准确的字符宽度判断方法
-     */
-    private boolean isFullWidth(char c) {
-        // 使用 Character.UnicodeBlock 进行精确判断
-        Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
-        
-        if (block == null) return false;
-        
-        // 所有CJK相关字符块（全角）
-        if (block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
-            || block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
-            || block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
-            || block == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
-            || block == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT
-            || block == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
-            || block == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT
-            || block == Character.UnicodeBlock.KANGXI_RADICALS) {
-            return true;
-        }
-        
-        // 日韩文字（全角）
-        if (block == Character.UnicodeBlock.HIRAGANA
-            || block == Character.UnicodeBlock.KATAKANA
-            || block == Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS
-            || block == Character.UnicodeBlock.HANGUL_SYLLABLES
-            || block == Character.UnicodeBlock.HANGUL_JAMO
-            || block == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO) {
-            return true;
-        }
-        
-        // 全角ASCII和全角标点
-        if (block == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
-            // 全角字符范围：0xFF01-0xFF60 和 0xFFE0-0xFFE6
-            return (c >= 0xFF01 && c <= 0xFF60) || (c >= 0xFFE0 && c <= 0xFFE6);
-        }
-        
-        // 中文标点符号等
-        if (block == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
-            // 一些特定的全角标点
-            return c >= 0x2000 && c <= 0x206F;
-        }
-        
-        // 特殊符号（根据实际终端渲染调整）
-        // 这些符号在Windows终端中通常显示为双宽
-        if (c == '★' || c == '☆' || c == '●' || c == '○' || 
-            c == '■' || c == '□' || c == '▲' || c == '△' ||
-            c == '◆' || c == '◇' || c == '※' || c == '√' ||
-            c == '✓' || c == '✗' || c == '✕') {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * 填充字符串到指定显示宽度（精确对齐）
-     * @param str 原始字符串
-     * @param targetWidth 目标显示宽度
-     * @return 填充后的字符串
-     */
-    private String padToWidth(String str, int targetWidth) {
-        if (str == null) str = "";
-        
-        // 计算当前显示宽度
-        int currentWidth = getDisplayWidth(str);
-        
-        // 如果超长，截断
-        if (currentWidth > targetWidth) {
-            int width = 0;
-            int cutIndex = 0;
-            for (int i = 0; i < str.length(); i++) {
-                char c = str.charAt(i);
-                // 修复：使用 isFullWidth 方法保持一致性
-                int charWidth = isFullWidth(c) ? 2 : 1;
-                if (width + charWidth > targetWidth) {
-                    break;
-                }
-                width += charWidth;
-                cutIndex = i + 1;
-            }
-            str = str.substring(0, cutIndex);
-            currentWidth = width;
-        }
-        
-        // 补齐空格到目标宽度
-        StringBuilder sb = new StringBuilder(str);
-        for (int i = currentWidth; i < targetWidth; i++) {
-            sb.append(" ");
-        }
-        
-        return sb.toString();
-    }
 }
 

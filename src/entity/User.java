@@ -9,28 +9,23 @@ import java.util.Set;
 /**
  * 用户实体类
  * 
- * 核心设计：
- * 1. 使用EnumSet<UserRole>管理用户角色（支持多角色）
- * 2. 信誉分系统（默认100分，评价后会变化）
- * 3. 状态管理（正常/封禁/注销）
+ * 使用EnumSet管理用户角色，支持一个用户拥有多个角色（买家+卖家+管理员）。
+ * EnumSet相比多个boolean字段的优势：
+ * - 类型安全且高性能（内部使用位向量）
+ * - 语义清晰且易扩展（新增角色无需修改类结构）
  * 
- * 答辩要点：
- * 为什么使用EnumSet而不是多个boolean字段？
- * - 类型安全：编译期检查，不会出错
- * - 高性能：内部使用位向量实现
- * - 易扩展：新增角色无需修改类结构
- * - 语义清晰：Set<UserRole>比isBuyer/isSeller更直观
+ * 信誉分系统：初始100分，范围0-200分，根据交易行为和评价动态调整。
  */
 public class User {
     
-    private String userId;              // 用户ID（自动生成）
-    private String username;            // 用户名
-    private String password;            // 密码（实际应该加密）
-    private Set<UserRole> roles;        // 角色集合（使用EnumSet）
-    private UserStatus status;          // 用户状态
-    private int reputation;             // 信誉分（默认100）
-    private LocalDateTime registerTime; // 注册时间
-    private LocalDateTime lastLoginTime;// 最后登录时间
+    private String userId;
+    private String username;
+    private String password;
+    private Set<UserRole> roles;
+    private UserStatus status;
+    private int reputation;
+    private LocalDateTime registerTime;
+    private LocalDateTime lastLoginTime;
     
     /**
      * 构造器

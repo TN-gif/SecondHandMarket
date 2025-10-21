@@ -12,6 +12,18 @@
     "updateTime": "2025-10-20 22:17:46"
   },
   {
+    "productId": "P17610472656033",
+    "title": "笔记本电脑",
+    "description": "惠普品牌的笔记本电脑，使用2年",
+    "price": 3400.0,
+    "category": "ELECTRONICS",
+    "condition": "GOOD",
+    "status": "RESERVED",
+    "sellerId": "U17610469612961",
+    "publishTime": "2025-10-21 19:47:45",
+    "updateTime": "2025-10-21 19:49:38"
+  },
+  {
     "productId": "P17608624236056",
     "title": "Java编程思想（第4版）",
     "description": "经典教材，几乎全新",
@@ -36,6 +48,18 @@
     "updateTime": "2025-10-20 11:13:00"
   },
   {
+    "productId": "P176104858345413",
+    "title": "耳机",
+    "description": "一款与游戏联名的耳机，音质很好，我抽奖抽中的，暂未开封",
+    "price": 500.0,
+    "category": "ELECTRONICS",
+    "condition": "BRAND_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17608792961404",
+    "publishTime": "2025-10-21 20:09:43",
+    "updateTime": "2025-10-21 20:09:43"
+  },
+  {
     "productId": "P17608624235905",
     "title": "iPhone 13 Pro",
     "description": "9成新，无划痕，配件齐全",
@@ -48,16 +72,40 @@
     "updateTime": "2025-10-20 22:26:36"
   },
   {
+    "productId": "P17610484082739",
+    "title": "小米手机13",
+    "description": "很好用的小米手机，只使用了1个月",
+    "price": 2400.0,
+    "category": "ELECTRONICS",
+    "condition": "LIKE_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-21 20:06:48",
+    "updateTime": "2025-10-21 20:06:48"
+  },
+  {
     "productId": "P176096917969612",
     "title": "抱枕",
     "description": "软绵绵的抱枕，抱起来很舒服",
     "price": 50.0,
     "category": "DAILY",
     "condition": "BRAND_NEW",
-    "status": "REMOVED",
+    "status": "SOLD",
     "sellerId": "U17608792961404",
     "publishTime": "2025-10-20 22:06:19",
-    "updateTime": "2025-10-20 22:20:44"
+    "updateTime": "2025-10-20 23:43:11"
+  },
+  {
+    "productId": "P176104845717010",
+    "title": "金钱心理学",
+    "description": "关于金融与心理的图书，感觉很有帮助，只使用了1个月不到",
+    "price": 20.0,
+    "category": "BOOKS",
+    "condition": "LIKE_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-21 20:07:37",
+    "updateTime": "2025-10-21 20:07:37"
   },
   {
     "productId": "P17609297883688",
@@ -66,9 +114,21 @@
     "price": 100.0,
     "category": "BOOKS",
     "condition": "LIKE_NEW",
-    "status": "RESERVED",
+    "status": "SOLD",
     "sellerId": "U17608624235533",
     "publishTime": "2025-10-20 11:09:48",
-    "updateTime": "2025-10-20 21:54:23"
+    "updateTime": "2025-10-20 23:39:05"
+  },
+  {
+    "productId": "P176104852536411",
+    "title": "玩偶熊",
+    "description": "一只很可爱的玩偶熊，相信可以给你带来快乐，刚买回家",
+    "price": 43.0,
+    "category": "DAILY",
+    "condition": "BRAND_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-21 20:08:45",
+    "updateTime": "2025-10-21 20:08:45"
   }
 ]

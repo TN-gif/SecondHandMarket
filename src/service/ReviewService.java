@@ -20,15 +20,10 @@ import java.util.List;
 /**
  * 评价服务
  * 
- * 核心功能：
- * 1. 创建评价
- * 2. 查询评价
- * 3. 更新卖家信誉分
- * 
- * 答辩要点：
- * - 评价与信誉挂钩：好评+5分，差评-3分
- * - 权限校验：只有买家可以评价，且只能评价已完成的订单
- * - 一个订单只能评价一次
+ * 负责订单评价的创建和查询。
+ * 评价影响卖家信誉分：5星+5分，4星+2分，3星0分，2星-2分，1星-3分。
+ * 只有买家可以评价已完成的订单，且每个订单只能评价一次。
+ * 低分评价（1-2星）会向卖家发送特别提醒。
  */
 public class ReviewService {
     
@@ -42,83 +37,136 @@ public class ReviewService {
         this.notificationService = new NotificationService();
     }
     
-    // ========== 创建评价 ==========
-    
     /**
      * 创建评价
+     * 
+     * 评价会影响卖家信誉分，低分评价（1-2星）会向卖家发送特别提醒。
+     * 
+     * @param buyer 买家，必须是订单的买家
+     * @param orderId 订单ID，必须是已完成状态
+     * @param rating 评分，1-5星
+     * @param content 评价内容
+     * @return 创建的评价对象
+     * @throws PermissionDeniedException 如果用户状态异常、不是买家或不是订单所有者
+     * @throws BusinessException 如果订单未完成、已评价过或评分无效
      */
     public Review createReview(User buyer, String orderId, int rating, String content) {
-        // 1. 用户状态检查
+        validateReviewerStatus(buyer);
+        Order order = validateOrderForReview(buyer, orderId);
+        validateRating(rating);
+        
+        String reviewId = IdGenerator.generateReviewId();
+        Review review = new Review(reviewId, orderId, order.getProductId(),
+                                  buyer.getUserId(), order.getSellerId(), rating, content);
+        
+        dataCenter.addReview(review);
+        updateSellerReputation(order.getSellerId(), rating);
+        notifyLowRatingIfNeeded(order, rating, content);
+        
+        return review;
+    }
+    
+    /**
+     * 根据ID获取评价
+     * 
+     * @param reviewId 评价ID
+     * @return 评价对象
+     * @throws ResourceNotFoundException 如果评价不存在
+     */
+    public Review getReviewById(String reviewId) {
+        return dataCenter.findReviewById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("评价不存在"));
+    }
+    
+    /**
+     * 根据订单ID获取评价
+     * 
+     * @param orderId 订单ID
+     * @return 评价对象
+     * @throws ResourceNotFoundException 如果评价不存在
+     */
+    public Review getReviewByOrderId(String orderId) {
+        return dataCenter.findReviewByOrderId(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("No review found for this order"));
+    }
+    
+    /**
+     * 获取卖家收到的所有评价
+     * 
+     * @param sellerId 卖家ID
+     * @return 评价列表
+     */
+    public List<Review> getReviewsBySeller(String sellerId) {
+        return dataCenter.findReviewsByReviewee(sellerId);
+    }
+    
+    /**
+     * 计算卖家的平均评分
+     * 
+     * @param sellerId 卖家ID
+     * @return 平均评分，如果没有评价返回0.0
+     */
+    public double getAverageRating(String sellerId) {
+        List<Review> reviews = getReviewsBySeller(sellerId);
+        if (reviews.isEmpty()) {
+            return 0.0;
+        }
+        return reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+    }
+    
+    /**
+     * 验证评价者状态
+     */
+    private void validateReviewerStatus(User buyer) {
         if (buyer.getStatus() == UserStatus.BANNED) {
             throw new PermissionDeniedException("您的账号已被封禁，无法发表评价");
         }
         if (buyer.getStatus() == UserStatus.DELETED) {
             throw new PermissionDeniedException("账号已被删除");
         }
-        
-        // 2. 权限校验：必须是买家
         if (!buyer.hasRole(UserRole.BUYER)) {
             throw new PermissionDeniedException("只有买家才能发表评价");
         }
-        
-        // 3. 查找订单
+    }
+    
+    /**
+     * 验证订单是否可评价
+     */
+    private Order validateOrderForReview(User buyer, String orderId) {
         Order order = dataCenter.findOrderById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("订单不存在"));
         
-        // 4. 权限校验：只能评价自己的订单
         if (!order.getBuyerId().equals(buyer.getUserId())) {
             throw new PermissionDeniedException("只能评价自己的订单");
         }
         
-        // 5. 订单状态检查：只有已完成的订单可以评价
         if (!order.canBeReviewed()) {
             throw new BusinessException("只能评价已完成的订单");
         }
         
-        // 6. 检查是否已经评价过
         if (dataCenter.findReviewByOrderId(orderId).isPresent()) {
             throw new BusinessException("该订单已经评价过了");
         }
         
-        // 7. 验证评分
+        return order;
+    }
+    
+    /**
+     * 验证评分
+     */
+    private void validateRating(int rating) {
         if (!InputValidator.isValidRating(rating)) {
             throw new BusinessException("评分必须在1-5星之间");
         }
-        
-        // 8. 创建评价
-        String reviewId = IdGenerator.generateReviewId();
-        Review review = new Review(reviewId, orderId, order.getProductId(),
-                                  buyer.getUserId(), order.getSellerId(), rating, content);
-        
-        // 9. 保存评价
-        dataCenter.addReview(review);
-        
-        // 10. 更新卖家信誉分
-        updateSellerReputation(order.getSellerId(), rating);
-        
-        // 11. 如果是低分评价（1-2星），额外通知卖家注意
-        if (rating <= 2) {
-            Product product = dataCenter.findProductById(order.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("商品不存在"));
-            
-            // 发送特殊提醒
-            notificationService.notify(order.getSellerId(), 
-                String.format("【低评分提醒】您收到了%d星差评！订单：%s，商品：%s，评价：%s。请提高服务质量！", 
-                    rating, orderId, product.getTitle(), content));
-        }
-        
-        return review;
     }
     
     /**
      * 更新卖家信誉分
      * 
-     * 规则：
-     * - 5星：+5分
-     * - 4星：+2分
-     * - 3星：0分
-     * - 2星：-2分
-     * - 1星：-3分
+     * 根据评分调整信誉：5星+5分，4星+2分，3星0分，2星-2分，1星-3分。
      */
     private void updateSellerReputation(String sellerId, int rating) {
         User seller = dataCenter.findUserById(sellerId)
@@ -140,43 +188,20 @@ public class ReviewService {
         }
     }
     
-    // ========== 查询评价 ==========
-    
     /**
-     * 根据ID获取评价
+     * 低分评价时发送特别通知
+     * 
+     * 1-2星差评会提醒卖家注意服务质量。
      */
-    public Review getReviewById(String reviewId) {
-        return dataCenter.findReviewById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException("评价不存在"));
-    }
-    
-    /**
-     * 根据订单ID获取评价
-     */
-    public Review getReviewByOrderId(String orderId) {
-        return dataCenter.findReviewByOrderId(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("No review found for this order"));
-    }
-    
-    /**
-     * 获取卖家的所有评价
-     */
-    public List<Review> getReviewsBySeller(String sellerId) {
-        return dataCenter.findReviewsByReviewee(sellerId);
-    }
-    
-    /**
-     * 计算卖家的平均评分
-     */
-    public double getAverageRating(String sellerId) {
-        List<Review> reviews = getReviewsBySeller(sellerId);
-        if (reviews.isEmpty()) {
-            return 0.0;
+    private void notifyLowRatingIfNeeded(Order order, int rating, String content) {
+        if (rating <= 2) {
+            Product product = dataCenter.findProductById(order.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("商品不存在"));
+            
+            notificationService.notify(order.getSellerId(), 
+                String.format("【低评分提醒】您收到了%d星差评！订单：%s，商品：%s，评价：%s。请提高服务质量！", 
+                    rating, order.getOrderId(), product.getTitle(), content));
         }
-        return reviews.stream()
-                .mapToInt(Review::getRating)
-                .average()
-                .orElse(0.0);
     }
 }
 
