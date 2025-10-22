@@ -1,5 +1,41 @@
 [
   {
+    "productId": "P17608624235905",
+    "title": "iPhone 13 Pro",
+    "description": "9成新，无划痕，配件齐全",
+    "price": 4599.0,
+    "category": "ELECTRONICS",
+    "condition": "LIKE_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-19 16:27:03",
+    "updateTime": "2025-10-22 17:27:14"
+  },
+  {
+    "productId": "P176104845717010",
+    "title": "金钱心理学",
+    "description": "关于金融与心理的图书，感觉很有帮助，只使用了1个月不到",
+    "price": 20.0,
+    "category": "BOOKS",
+    "condition": "LIKE_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-21 20:07:37",
+    "updateTime": "2025-10-21 20:07:37"
+  },
+  {
+    "productId": "P176104852536411",
+    "title": "玩偶熊",
+    "description": "一只很可爱的玩偶熊，相信可以给你带来快乐，刚买回家",
+    "price": 43.0,
+    "category": "DAILY",
+    "condition": "BRAND_NEW",
+    "status": "SOLD",
+    "sellerId": "U17608624235533",
+    "publishTime": "2025-10-21 20:08:45",
+    "updateTime": "2025-10-22 17:02:31"
+  },
+  {
     "productId": "P17608624236058",
     "title": "羽毛球拍（双拍）",
     "description": "李宁N90，使用半年",
@@ -36,6 +72,18 @@
     "updateTime": "2025-10-19 21:01:47"
   },
   {
+    "productId": "P17611232509753",
+    "title": "充电宝",
+    "description": "非常好用的充电宝，可以连续充满手机电量四次",
+    "price": 100.0,
+    "category": "ELECTRONICS",
+    "condition": "LIKE_NEW",
+    "status": "AVAILABLE",
+    "sellerId": "U17611230919881",
+    "publishTime": "2025-10-22 16:54:10",
+    "updateTime": "2025-10-22 16:54:10"
+  },
+  {
     "productId": "P17608624236057",
     "title": "Nike运动鞋",
     "description": "42码，穿过3次",
@@ -60,28 +108,16 @@
     "updateTime": "2025-10-21 20:09:43"
   },
   {
-    "productId": "P17608624235905",
-    "title": "iPhone 13 Pro",
-    "description": "9成新，无划痕，配件齐全",
-    "price": 4599.0,
-    "category": "ELECTRONICS",
-    "condition": "LIKE_NEW",
-    "status": "RESERVED",
-    "sellerId": "U17608624235533",
-    "publishTime": "2025-10-19 16:27:03",
-    "updateTime": "2025-10-20 22:26:36"
-  },
-  {
     "productId": "P17610484082739",
     "title": "小米手机13",
     "description": "很好用的小米手机，只使用了1个月",
     "price": 2400.0,
     "category": "ELECTRONICS",
     "condition": "LIKE_NEW",
-    "status": "AVAILABLE",
+    "status": "SOLD",
     "sellerId": "U17608624235533",
     "publishTime": "2025-10-21 20:06:48",
-    "updateTime": "2025-10-21 20:06:48"
+    "updateTime": "2025-10-22 17:22:05"
   },
   {
     "productId": "P176096917969612",
@@ -96,16 +132,16 @@
     "updateTime": "2025-10-20 23:43:11"
   },
   {
-    "productId": "P176104845717010",
-    "title": "金钱心理学",
-    "description": "关于金融与心理的图书，感觉很有帮助，只使用了1个月不到",
-    "price": 20.0,
-    "category": "BOOKS",
+    "productId": "P17611243159693",
+    "title": "游戏手柄",
+    "description": "XXXXX品牌的游戏手柄，简单使用两个月",
+    "price": 180.0,
+    "category": "ELECTRONICS",
     "condition": "LIKE_NEW",
     "status": "AVAILABLE",
-    "sellerId": "U17608624235533",
-    "publishTime": "2025-10-21 20:07:37",
-    "updateTime": "2025-10-21 20:07:37"
+    "sellerId": "U17611242104701",
+    "publishTime": "2025-10-22 17:11:55",
+    "updateTime": "2025-10-22 17:16:27"
   },
   {
     "productId": "P17609297883688",
@@ -118,17 +154,5 @@
     "sellerId": "U17608624235533",
     "publishTime": "2025-10-20 11:09:48",
     "updateTime": "2025-10-20 23:39:05"
-  },
-  {
-    "productId": "P176104852536411",
-    "title": "玩偶熊",
-    "description": "一只很可爱的玩偶熊，相信可以给你带来快乐，刚买回家",
-    "price": 43.0,
-    "category": "DAILY",
-    "condition": "BRAND_NEW",
-    "status": "AVAILABLE",
-    "sellerId": "U17608624235533",
-    "publishTime": "2025-10-21 20:08:45",
-    "updateTime": "2025-10-21 20:08:45"
   }
 ]

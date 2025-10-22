@@ -349,7 +349,7 @@ public class UserMenuHandler extends BaseMenuHandler {
             
             // 使用FlipTables专业库创建表格
             PerfectTableFormatter.Table table = PerfectTableFormatter.createTable()
-                    .setHeaders("编号", "商品名称", "价格", "分类", "成色", "卖家评分");
+                    .setHeaders("No.", "Product Name", "Price", "Category", "Condition", "Seller Rating");
             
             for (int i = 0; i < results.size(); i++) {
                 Product p = results.get(i);

@@ -25,5 +25,14 @@
     "processed": true,
     "result": "已拒绝：拒绝理由",
     "processTime": "2025-10-20 20:36:06"
+  },
+  {
+    "appealId": "A176112544501019",
+    "userId": "U17611230919881",
+    "reason": "我没有错",
+    "createTime": "2025-10-22 17:30:45",
+    "processed": true,
+    "result": "已通过：账号已解封",
+    "processTime": "2025-10-22 17:32:28"
   }
 ]
